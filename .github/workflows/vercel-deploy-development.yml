@@ -10,14 +10,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '18'
+
       - name: Install Vercel CLI
         run: npm install -g vercel
+
+      # ✅ ADD THIS STEP
+      - name: Pull Vercel project info
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      # ✅ EXISTING DEPLOY STEP
       - name: Deploy to Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          vercel --version
-          vercel --prod --token "$VERCEL_TOKEN" --confirm --yes
+          vercel --prod --yes --token="$VERCEL_TOKEN"
